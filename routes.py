@@ -16,7 +16,7 @@ def info_page():
 def simulator_page():
     return render_template('simulator.html')    
 
-#Integral Pages
+# SPECIAL PAGE REDIRECTS
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
