@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body class="index-bg outline-thin">
+    <nav class="navbar navbar-expand-lg navbar-dark glass-nav">
+        <div class="container-fluid">
+            <a class="navbar-brand mb-0 h1" href="#">DeTech</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                  <a class="nav-link active" aria-current="page" href="{{ url_for('main.index') }}">Home</a>
+                  <a class="nav-link" href="{{ url_for('main.info_page') }}">Info</a>
+                  <a class="nav-link" href="{{ url_for('main.simulator_page') }}">Simulator</a>
+                  <a class="nav-link" href="{{ url_for('main.show') }}">Data</a>
+                </div>
+              </div>
+        </div>
+    </nav>
+    <div class="container-fluid page-content">
+        <div class="row">
+            <div class="col-md-6 text-blur">
+                <h1>Welcome to DeTech!</h1>
+                <br>
+                <h2>Project Statement:</h2>
+                <p>Design and build an interactive web application to educate new CME Group employees and interns on how to identify phishing attacks; train a simple AI model to identify malicious URLs to defend against growing cybersecurity threats.</p>
+                <h2>Project Description:</h2>
+                <p>Our project statement requires a comprehensive solution for evolving cybersecurity threats; this is broken down into two parts: a phishing campaign and an AI model that identifies various malware. We plan to spend the first two-three weeks conducting research on current cybersecurity practices and developing malware technology. We understand that most security breaches occur at the employee level. Our phishing campaign will act as a risk-free environment for employees to learn and practice identifying phishing techniques and malware. While informing employees is one avenue to combating security threats, AI can be used to detect phishing attacks and malware. Our AI model will train on phishing links and other instances of malware to be able to report the safety of any links back to the user.</p>
+                <h2>Reason for choosing this project:</h2>
+                <p>This project was chosen to address the growing threat of phishing attacks in the workplace. By creating an interactive educational platform and an AI model, we aim to empower employees with the knowledge and tools they need to protect themselves and their organizations from cyber threats.</p>
+                <p>Also, for the sake of a simple and easily manageable user interface, we made our web application simple and intuitive to use.</p>
+            </div>
+            <div class="col-md-6 d-flex align-items-center justify-content-center">
+                <img src="{{ url_for('static', filename='media/cy1.png') }}" alt="Cybersecurity" class="img-fluid d-block mx-auto mt-3">
+            </div>
+        </div>
+    </div>
+    <nav class="navbar navbar-dark glass-nav fixed-bottom">
+        <div class="container-fluid justify-content-center">
+            <a class="nav-link text-light mx-3" href="mailto:contact@detech.com">Email: contact@detech.com</a>
+            <a class="nav-link text-light mx-3" href="tel:+15555555555">Call: +1 555-555-5555</a>
+            <a class="nav-link text-light mx-3">Contact Form</a>
+            <a class="nav-link text-light mx-3 footer-credit" href="http://www.freepik.com" target="_blank">Designed by Freepik</a> <!-- Credit for background -->
+        </div>
+    </nav>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

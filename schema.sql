@@ -1,0 +1,10 @@
+DROP TABLE IF EXISTS sim_responses;
+
+CREATE TABLE sim_responses (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    q1 TEXT NOT NULL,
+    q2 TEXT NOT NULL,
+    q3 TEXT NOT NULL,
+    q4 TEXT NOT NULL,
+    q5 TEXT NOT NULL
+);

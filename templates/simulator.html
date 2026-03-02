@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body class="simulator-bg">
+    <nav class="navbar navbar-expand-lg navbar-dark glass-nav outline-thin">
+        <div class="container-fluid">
+            <a class="navbar-brand mb-0 h1" href="#">DeTech</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                  <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+                  <a class="nav-link" href="{{ url_for('main.info_page') }}">Info</a>
+                  <a class="nav-link active" aria-current="page" href="{{ url_for('main.simulator_page') }}">Simulator</a>
+                  <a class="nav-link" href="{{ url_for('main.show') }}">Data</a>
+                </div>
+              </div>
+        </div>
+    </nav>
+    <div class="container-fluid page-content outline-thin">
+        <h1>The Simulator</h1>
+        <p>Test your ability to identify phishing emails by taking our simulator! Below are 5 different emails that you may encounter in the workplace. For each email, select whether you think it is a phishing email, a real email, or if you are unsure. Once you submit your answers, they will be stored in our database and you can view them on the Data page.</p><br>
+        <form method="POST" action="{{ url_for('main.simulator_page') }}">
+
+            <h2>Email 1</h2>
+            <label class="choice"> <input type="radio" name="q1" value="A"> Phishing </label><br>
+            <label class="choice"> <input type="radio" name="q1" value="B"> Real </label><br>
+            <label class="choice"> <input type="radio" name="q1" value="C"> Unsure </label><br>
+
+            <h2>Email 2</h2>
+            <label class="choice"> <input type="radio" name="q2" value="A"> Phishing </label><br>
+            <label class="choice"> <input type="radio" name="q2" value="B"> Real </label><br>
+            <label class="choice"> <input type="radio" name="q2" value="C"> Unsure </label><br>
+
+            <h2>Email 3</h2>
+            <label class="choice"> <input type="radio" name="q3" value="A"> Phishing </label><br>
+            <label class="choice"> <input type="radio" name="q3" value="B"> Real </label><br>
+            <label class="choice"> <input type="radio" name="q3" value="C"> Unsure </label><br>
+
+            <h2>Email 4</h2>
+            <label class="choice"> <input type="radio" name="q4" value="A"> Phishing </label><br>
+            <label class="choice"> <input type="radio" name="q4" value="B"> Real </label><br>
+            <label class="choice"> <input type="radio" name="q4" value="C"> Unsure </label><br>
+
+            <h2>Email 5</h2>
+            <label class="choice"> <input type="radio" name="q5" value="A"> Phishing </label><br>
+            <label class="choice"> <input type="radio" name="q5" value="B"> Real </label><br>
+            <label class="choice"> <input type="radio" name="q5" value="C"> Unsure </label><br><br>
+
+            <button type="submit" class="custom-button">Submit</button>
+        </form>
+    </div>
+
+    <div class="modal fade custom-modal" id="tyModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Simulator Submitted</h5>
+                </div>
+                <div class="modal-body">Thanks for completing the simulator!</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav class="navbar navbar-dark glass-nav fixed-bottom outline-thin">
+        <div class="container-fluid justify-content-center">
+            <a class="nav-link text-light mx-3" href="mailto:contact@detech.com">Email: contact@detech.com</a>
+            <a class="nav-link text-light mx-3" href="tel:+15555555555">Call: +1 555-555-5555</a>
+            <a class="nav-link text-light mx-3">Contact Form</a>
+            <a class="nav-link text-light mx-3 footer-credit" href="http://www.freepik.com" target="_blank">Designed by Freepik</a> <!-- Credit for background -->
+        </div>
+    </nav>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    {% if request.args.get('submitted') %}
+    <script>
+        var myModal = new bootstrap.Modal(document.getElementById('tyModal'));
+        myModal.show();
+    </script>
+    {% endif %}
+
+</body>
+</html>

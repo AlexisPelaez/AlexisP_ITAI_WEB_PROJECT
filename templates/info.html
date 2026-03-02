@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="info-bg outline-thin">
+    <nav class="navbar navbar-expand-lg navbar-dark glass-nav">
+        <div class="container-fluid">
+            <a class="navbar-brand mb-0 h1" href="#">DeTech</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                  <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+                  <a class="nav-link active" aria-current="page" href="{{ url_for('main.info_page') }}">Info</a>
+                  <a class="nav-link" href="{{ url_for('main.simulator_page') }}">Simulator</a>
+                  <a class="nav-link" href="{{ url_for('main.show') }}">Data</a>
+                </div>
+              </div>
+        </div>
+    </nav>
+    <div class="container-fluid page-content">
+        <div class="row">
+            <div class="col-md-6 text-blur">
+                <h2>About Phishing</h2>
+                <p>Phishing is a type of cyber attack where attackers impersonate legitimate organizations or individuals to trick victims into providing sensitive information, such as passwords, credit card numbers, or other personal data. Phishing attacks can occur through email, social media, text messages, or even phone calls.</p>
+                <p>Common signs of phishing include:</p>
+                <ul>
+                    <li>Unexpected or unsolicited messages</li>
+                    <li>Requests for sensitive information</li>
+                    <li>Urgent or threatening language</li>
+                    <li>Suspicious links or attachments</li>
+                    <li>Spelling and grammar errors</li>
+                </ul>
+                <p>To protect yourself from phishing attacks, always verify the sender's identity, avoid clicking on suspicious links, and never provide sensitive information in response to unsolicited requests.</p>
+            </div>
+            <div class="col-md-6 d-flex align-items-center justify-content-center">
+                <img src="{{ url_for('static', filename='media/ph1.png') }}" alt="Phishing Example" class="img-fluid d-block mx-auto mt-3">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 text-blur">
+                <h2>Phishing Methods: </h2>
+                <br>
+                <h3>Email Phishing:</h3>
+                <p>Using organization’s actual name but using a fake address (e.g., paypal@domainregistrar.com)</p>
+                <h3>Spear Phishing:</h3>
+                <p>Targets specific individuals by using their personal information</p>
+                <h3>Smishing & Vishing:</h3>
+                <p>Smishing uses text messages, while Vishing uses phone calls to get a person to click a link or share personal information</p>
+                <h3>Anger Phishing:</h3>
+                <p>Uses social media to get information or trick someone into downloading malware or possibly geotagging</p>
+            </div>
+            <div class="col-md-6 d-flex align-items-center justify-content-center">
+                <img src="{{ url_for('static', filename='media/ph2.png') }}" alt="Phishing Example" class="img-fluid d-block mx-auto mt-3">
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-6 text-blur">
+                <h2>About Malware:</h2>
+                <p>Malware is malicious software designed to harm or exploit any programmable device, network, or user. Malware can be used to steal sensitive information, disrupt operations, or gain unauthorized access to systems. It can be delivered through various means, including email attachments, infected websites, or software vulnerabilities.</p>
+                <h2>Malware Types:</h2>
+                <br>
+                <h3>Ransomware:</h3>
+                <p>Designed to deny a user to a system, network, data, or hardware until ransom is paid</p>
+                <h3>Trojans:</h3>
+                <p>Disguises itself as a program that seems safe, and run regardless of an application running in the background</p>
+                <h3>Viruses:</h3>
+                <p>A self-replicating program that inserts itself into an application to execute a specific task while app is running</p>
+                <h3>Worms:</h3>
+                <p>A malicious program that replicates itself to automatically spreading through a network and consume large volumes or memory and run on its own</p>
+            </div>
+            <div class="col-md-6 d-flex align-items-center justify-content-center">
+                <img src="{{ url_for('static', filename='media/mw1.png') }}" alt="Malware Example" class="img-fluid d-block mx-auto mt-3">
+            </div>
+        </div>
+    </div>
+    <nav class="navbar navbar-dark glass-nav fixed-bottom">
+        <div class="container-fluid justify-content-center">
+            <a class="nav-link text-light mx-3" href="mailto:contact@detech.com">Email: contact@detech.com</a>
+            <a class="nav-link text-light mx-3" href="tel:+15555555555">Call: +1 555-555-5555</a>
+            <a class="nav-link text-light mx-3">Contact Form</a>
+            <a class="nav-link text-light mx-3 footer-credit" href="http://www.freepik.com" target="_blank">Designed by Freepik</a> <!-- Credit for background -->
+        </div>
+    </nav>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
