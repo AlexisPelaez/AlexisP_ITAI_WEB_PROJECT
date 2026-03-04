@@ -26,37 +26,55 @@
         </div>
     </nav>
     <div class="container-fluid page-content outline-thin">
-        <h1>The Simulator</h1>
-        <p>Test your ability to identify phishing emails by taking our simulator! Below are 5 different emails that you may encounter in the workplace. For each email, select whether you think it is a phishing email, a real email, or if you are unsure. Once you submit your answers, they will be stored in our database and you can view them on the Data page.</p><br>
-        <form method="POST" action="{{ url_for('main.simulator_page') }}">
+        <div class="row">
+            <div class="col-lg-8 col-md-12">
+                <h1>The Simulator</h1>
+                <p>Test your ability to identify phishing emails by taking our simulator! Below are 5 different emails that you may encounter in the workplace. For each email, select whether you think it is a phishing email, a real email, or if you are unsure. Once you submit your answers, they will be stored in our database and you can view them on the Data page.</p><br>
+                <form method="POST" action="{{ url_for('main.simulator_page') }}">
 
-            <h2>Email 1</h2>
-            <label class="choice"> <input type="radio" name="q1" value="A"> Phishing </label><br>
-            <label class="choice"> <input type="radio" name="q1" value="B"> Real </label><br>
-            <label class="choice"> <input type="radio" name="q1" value="C"> Unsure </label><br>
+                    <h2>Email 1</h2>
+                    <label class="choice"> <input type="radio" name="q1" value="A"> Phishing </label><br>
+                    <label class="choice"> <input type="radio" name="q1" value="B"> Real </label><br>
+                    <label class="choice"> <input type="radio" name="q1" value="C"> Unsure </label><br>
 
-            <h2>Email 2</h2>
-            <label class="choice"> <input type="radio" name="q2" value="A"> Phishing </label><br>
-            <label class="choice"> <input type="radio" name="q2" value="B"> Real </label><br>
-            <label class="choice"> <input type="radio" name="q2" value="C"> Unsure </label><br>
+                    <h2>Email 2</h2>
+                    <label class="choice"> <input type="radio" name="q2" value="A"> Phishing </label><br>
+                    <label class="choice"> <input type="radio" name="q2" value="B"> Real </label><br>
+                    <label class="choice"> <input type="radio" name="q2" value="C"> Unsure </label><br>
 
-            <h2>Email 3</h2>
-            <label class="choice"> <input type="radio" name="q3" value="A"> Phishing </label><br>
-            <label class="choice"> <input type="radio" name="q3" value="B"> Real </label><br>
-            <label class="choice"> <input type="radio" name="q3" value="C"> Unsure </label><br>
+                    <h2>Email 3</h2>
+                    <label class="choice"> <input type="radio" name="q3" value="A"> Phishing </label><br>
+                    <label class="choice"> <input type="radio" name="q3" value="B"> Real </label><br>
+                    <label class="choice"> <input type="radio" name="q3" value="C"> Unsure </label><br>
 
-            <h2>Email 4</h2>
-            <label class="choice"> <input type="radio" name="q4" value="A"> Phishing </label><br>
-            <label class="choice"> <input type="radio" name="q4" value="B"> Real </label><br>
-            <label class="choice"> <input type="radio" name="q4" value="C"> Unsure </label><br>
+                    <h2>Email 4</h2>
+                    <label class="choice"> <input type="radio" name="q4" value="A"> Phishing </label><br>
+                    <label class="choice"> <input type="radio" name="q4" value="B"> Real </label><br>
+                    <label class="choice"> <input type="radio" name="q4" value="C"> Unsure </label><br>
 
-            <h2>Email 5</h2>
-            <label class="choice"> <input type="radio" name="q5" value="A"> Phishing </label><br>
-            <label class="choice"> <input type="radio" name="q5" value="B"> Real </label><br>
-            <label class="choice"> <input type="radio" name="q5" value="C"> Unsure </label><br><br>
+                    <h2>Email 5</h2>
+                    <label class="choice"> <input type="radio" name="q5" value="A"> Phishing </label><br>
+                    <label class="choice"> <input type="radio" name="q5" value="B"> Real </label><br>
+                    <label class="choice"> <input type="radio" name="q5" value="C"> Unsure </label><br><br>
 
-            <button type="submit" class="custom-button">Submit</button>
-        </form>
+                    <button type="submit" class="custom-button">Submit</button>
+                </form>
+            </div>
+            <div class="col-lg-4 col-md-12 mt-4 mt-lg-0">
+                <div class="card p-3 glass-nav outline-thin ai-box">
+                    <h3 class="mb-3">Ask the AI for Help</h3>
+
+                    <textarea id="aiInput" class="form-control" rows="4"
+                        placeholder="Ask about phishing, red flags, or anything in the simulator..."></textarea>
+
+                    <button class="btn btn-primary mt-3 w-100" onclick="askAI()">Ask AI</button>
+
+                    <div id="aiResponse" class="mt-3 p-2"
+                        style="white-space: pre-wrap; background: rgba(0,0,0,0.4); border-radius: 6px; min-height: 80px;">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="modal fade custom-modal" id="tyModal" tabindex="-1">
@@ -81,7 +99,7 @@
         </div>
     </nav>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script src="{{ url_for('static', filename='ai.js') }}"></script>
     {% if request.args.get('submitted') %}
     <script>
         var myModal = new bootstrap.Modal(document.getElementById('tyModal'));

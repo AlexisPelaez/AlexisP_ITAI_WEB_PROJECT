@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 
+
 def create_app():
     app = Flask(
     __name__,
@@ -23,6 +24,8 @@ def create_app():
     from . import routes
     app.register_blueprint(routes.bp)
 
+    # Register Groq API routes
+    from .groq import groq_bp
+    app.register_blueprint(groq_bp)
+
     return app
-
-

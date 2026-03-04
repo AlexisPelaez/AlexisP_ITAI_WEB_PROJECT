@@ -1,5 +1,6 @@
 from flask import Blueprint,render_template, request, redirect, url_for
 from .db import get_db
+
 bp = Blueprint('main',__name__)
 
 # SIMPLE PAGE REDIRECTS FOR HTML PAGES
@@ -38,5 +39,3 @@ def show():
     responses = db.execute("SELECT * FROM sim_responses").fetchall()
 
     return render_template('data.html', responses=responses)
-
-
