@@ -27,6 +27,31 @@ html, body {
     margin-right: 10px;
 }
 
+/* WELCOME PAGE / INTERMISSION CSS */
+
+.welcome-text{
+    margin-top: 4rem;
+    font-size: 8rem;
+}
+.welcome-bg {
+    background-color:black;
+    color: white;
+}
+.welcome-button {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    padding: 4rem 4rem;
+    font-size: 2rem;
+    margin-top: 10rem;
+}
+.intermission_box {
+    margin-top:5rem;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* END OF WELCOME PAGE CSS */
 .index-bg {
     background-image: url('/static/media/lcy2.jpg');
     background-size: cover;
