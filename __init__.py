@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from flask_session import Session
 from groq import Groq
 
 def create_app():
@@ -14,9 +15,19 @@ def create_app():
 
     # Ensure instance folder exists
     os.makedirs(app.instance_path, exist_ok=True)
-
-    # Database path inside app/instance/
+    
+    # Database configuration
     app.config["DATABASE"] = os.path.join(app.instance_path, "flask.sqlite")
+
+    # Configure session to use filesystem (instead of signed cookies)
+    app.config['SESSION_TYPE'] = 'filesystem'
+    app.config['SESSION_FILE_DIR'] = os.path.join(app.instance_path, 'flask_session')
+    Session(app)
+
+
+    # Configure session to use filesystem (instead of signed cookies)
+    app.config['SESSION_TYPE'] = 'filesystem'
+    Session(app)
 
      # Configure Groq client
     app.groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))

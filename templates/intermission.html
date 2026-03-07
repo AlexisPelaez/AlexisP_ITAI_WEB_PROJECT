@@ -13,12 +13,24 @@
             <h1 class="welcome-text">What is your profession?</h1>
         </div>
     </div>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-container d-flex align-items-center justify-content-center">
+                {% for msg in messages %}
+                    <p class="flash-text">{{ msg }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
     <div class="row">
         <div class="col-md-12 d-flex align-items-center justify-content-center">
             <form method="POST" action="{{ url_for('main.handle_profession') }}">
                 <textarea class="form-control profession-input intermission_box" id="profession" name="profession" rows="3" placeholder="Enter your profession here..."></textarea>
+                <textarea class="form-control profession-input intermission_box" id="realname" name="realname" rows="3" placeholder="Enter your name here..."></textarea>
                 <button type="submit" class="welcome-button">Submit</button>
             </form>
         </div>
+    </div>
 </body>
 </html>
