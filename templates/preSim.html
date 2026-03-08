@@ -33,6 +33,38 @@
                     {% endif %}
                 </form>
             </div>
+            <div class="col-lg-6 d-none d-lg-block">
+                <div class="card shadow-sm p-3 mb-4" style="background: rgba(255,255,255,0.1); border-radius: 12px; color: white;">
+                    <h3 class="mb-3">Your Simulation Profile</h3>
+
+                    <p><strong>Name:</strong> {{ realname }}</p>
+                    <p><strong>Profession:</strong> {{ profession }}</p>
+
+                    <hr style="border-color: rgba(255,255,255,0.3);">
+
+                    <h5>Scenario Details</h5>
+                    <ul>
+                        <li>5 tailored email examples</li>
+                        <li>Mixed phishing & real messages</li>
+                        <li>Difficulty adjusts to your role</li>
+                    </ul>
+
+                    <hr style="border-color: rgba(255,255,255,0.3);">
+
+                    <h5>Goal</h5>
+                    <p>Identify which emails are legitimate and which are phishing attempts. Trust your instincts and look for subtle red flags.</p>
+                </div>
+                <div class="card shadow-sm p-3 mt-4 profile-card" style="background: rgba(255,255,255,0.1); border-radius: 12px; color: white;">
+                    <h3 class="mb-3">Did You Know?</h3>
+                    <ul>
+                        <li>90% of data breaches start with phishing.</li>
+                        <li>Most phishing emails are opened within 3 minutes.</li>
+                        <li>Attackers often tailor messages to specific professions.</li>
+                        <li>Phishing can also occur via phone calls and text messages.</li>
+                        <li>Phishing attacks have increased by over 600% in the last year.</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </html>
