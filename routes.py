@@ -1,8 +1,5 @@
-from unittest import result
-
 from flask import Blueprint, app, current_app, jsonify,render_template, request, redirect, session, url_for
 from .db import get_db
-import re
 import json
 from flask import flash
 from groq import RateLimitError, APIError
