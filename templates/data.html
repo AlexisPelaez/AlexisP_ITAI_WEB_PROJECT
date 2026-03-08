@@ -9,52 +9,97 @@
 
 </head>
 <body class="data-bg">
-    <nav class="navbar navbar-expand-lg navbar-dark glass-nav">
-        <div class="container-fluid">
-            <a class="navbar-brand mb-0 h1" href="#">DeTech</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                  <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
-                  <a class="nav-link" href="{{ url_for('main.info_page') }}">Info</a>
-                  <a class="nav-link" href="{{ url_for('main.simulator_page') }}">Simulator</a>
-                  <a class="nav-link active" aria-current="page" href="{{ url_for('main.show') }}">Data</a>
-                </div>
-              </div>
-        </div>
-    </nav>
     <div class="container-fluid page-content">
         <div class="container mt-4">
-            <h1>Simulator Responses</h1>
-            <table class="table table-striped table-bordered mt-3">
-                <thead class="table-dark">
-                    <tr> 
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="alert alert-success">
+                        {{ messages[0] }}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <h2>Pre‑Test Responses</h2>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
                         <th>ID</th>
                         <th>Q1</th>
+                        <th>Correct?</th>
                         <th>Q2</th>
+                        <th>Correct?</th>
                         <th>Q3</th>
+                        <th>Correct?</th>
                         <th>Q4</th>
+                        <th>Correct?</th>
                         <th>Q5</th>
+                        <th>Correct?</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for r in responses %}
-                    <tr> 
-                        <td>{{ r.id }}</td>
-                        <td>{{ r.q1 }}</td>
-                        <td>{{ r.q2 }}</td>
-                        <td>{{ r.q3 }}</td>
-                        <td>{{ r.q4 }}</td>
-                        <td>{{ r.q5 }}</td>
+                    {% for row in preSim_responses %}
+                    <tr>
+                        <td>{{ row.id }}</td>
+                        <td>{{ row.pq1 }}</td>
+                        <td>{{ '✔' if row.pq1_correct else '✘' }}</td>
+
+                        <td>{{ row.pq2 }}</td>
+                        <td>{{ '✔' if row.pq2_correct else '✘' }}</td>
+
+                        <td>{{ row.pq3 }}</td>
+                        <td>{{ '✔' if row.pq3_correct else '✘' }}</td>
+
+                        <td>{{ row.pq4 }}</td>
+                        <td>{{ '✔' if row.pq4_correct else '✘' }}</td>
+
+                        <td>{{ row.pq5 }}</td>
+                        <td>{{ '✔' if row.pq5_correct else '✘' }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
-            {% if responses|length == 0 %}
-            <p>No responses yet.</p>
-            {% endif %}
+
+            <hr class="my-5">
+
+            <h2>Post‑Test Responses</h2>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Q1</th>
+                        <th>Correct?</th>
+                        <th>Q2</th>
+                        <th>Correct?</th>
+                        <th>Q3</th>
+                        <th>Correct?</th>
+                        <th>Q4</th>
+                        <th>Correct?</th>
+                        <th>Q5</th>
+                        <th>Correct?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in sim_responses %}
+                    <tr>
+                        <td>{{ row.id }}</td>
+                        <td>{{ row.pq1 }}</td>
+                        <td>{{ '✔' if row.pq1_correct else '✘' }}</td>
+
+                        <td>{{ row.pq2 }}</td>
+                        <td>{{ '✔' if row.pq2_correct else '✘' }}</td>
+
+                        <td>{{ row.pq3 }}</td>
+                        <td>{{ '✔' if row.pq3_correct else '✘' }}</td>
+
+                        <td>{{ row.pq4 }}</td>
+                        <td>{{ '✔' if row.pq4_correct else '✘' }}</td>
+
+                        <td>{{ row.pq5 }}</td>
+                        <td>{{ '✔' if row.pq5_correct else '✘' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
     <nav class="navbar navbar-dark glass-nav fixed-bottom">

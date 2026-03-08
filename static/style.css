@@ -34,7 +34,7 @@ html, body {
     font-size: 8rem;
 }
 .welcome-bg {
-    background-color:black;
+    background: rgba(0, 0, 0, 0.8);
     color: white;
 }
 .welcome-button {

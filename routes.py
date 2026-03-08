@@ -67,8 +67,10 @@ bp = Blueprint('main',__name__)
 @bp.route('/', methods=['GET', 'POST'])
 def start():
     if request.method == 'POST':
+        session['test_mode'] = 'pre'
         return redirect(url_for('main.preSim_page'))
     return render_template('welcome.html')
+
 
 @bp.route('/index', methods=['GET', 'POST'])
 def index():
@@ -133,46 +135,123 @@ def intermission():
 
 @bp.route('/preSim', methods=['GET', 'POST'])
 def preSim_page():
-    # 1. Retrieve raw AI output from session
     raw = session.get('generated_examples')
     profession = session.get('profession')
     realname = session.get('realname')
 
-    # 2. Parse JSON into Python list
     examples = None
     if raw:
         try:
             examples = json.loads(raw)
-            print("RAW AI OUTPUT:", raw)
         except:
             examples = None
-            print("RAW AI OUTPUT:", raw)
-    # 3. Handle form submission
+
     if request.method == 'POST':
         pq1 = request.form.get('pq1')
         pq2 = request.form.get('pq2')
         pq3 = request.form.get('pq3')
         pq4 = request.form.get('pq4')
         pq5 = request.form.get('pq5')
-        db = get_db()
-        db.execute("INSERT INTO pre_sim_responses (pq1, pq2, pq3, pq4, pq5) VALUES (?,?,?,?,?) ", (pq1, pq2, pq3, pq4, pq5))
-        db.commit()
-        return redirect(url_for('main.index'))
-    # 4. Render template with AI examples and profession
+
+        mapping = {
+        "A": "phishing",
+        "B": "real",
+        "C": "unsure"
+        }
+
+        pq1 = mapping.get(pq1)
+        pq2 = mapping.get(pq2)
+        pq3 = mapping.get(pq3)
+        pq4 = mapping.get(pq4)
+        pq5 = mapping.get(pq5)
+
+        # DETERMINE CORRECT ANSWERS
+        correct1 = 1 if pq1.lower().strip() == examples[0]["type"].lower().strip() else 0
+        correct2 = 1 if pq2.lower().strip() == examples[1]["type"].lower().strip() else 0
+        correct3 = 1 if pq3.lower().strip() == examples[2]["type"].lower().strip() else 0
+        correct4 = 1 if pq4.lower().strip() == examples[3]["type"].lower().strip() else 0
+        correct5 = 1 if pq5.lower().strip() == examples[4]["type"].lower().strip() else 0
+
+        # CHOOSE TABLE BASED ON TEST MODE
+        mode = session.get('test_mode', 'pre')
+        table = "pre_sim_responses" if mode == 'pre' else "sim_responses"
+
+        # PRE-TEST SAVES TO SESSION ONLY
+        if mode == 'pre':
+            session['pretest_results'] = {
+                "pq1": pq1, "pq1_correct": correct1,
+                "pq2": pq2, "pq2_correct": correct2,
+                "pq3": pq3, "pq3_correct": correct3,
+                "pq4": pq4, "pq4_correct": correct4,
+                "pq5": pq5, "pq5_correct": correct5
+            }
+            return redirect(url_for('main.index'))
+        # END PRE-TEST BLOCK 
+
+        # POST-TEST SAVES BOTH TESTS 
+        if mode == 'post':
+            pre = session.get('pretest_results')
+            if not pre:
+                return redirect(url_for('main.index'))
+
+            db = get_db()
+
+            # SAVE PRE-TEST
+            db.execute(
+                """
+                INSERT INTO pre_sim_responses
+                (pq1, pq1_correct, pq2, pq2_correct, pq3, pq3_correct, pq4, pq4_correct, pq5, pq5_correct)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    pre["pq1"], pre["pq1_correct"],
+                    pre["pq2"], pre["pq2_correct"],
+                    pre["pq3"], pre["pq3_correct"],
+                    pre["pq4"], pre["pq4_correct"],
+                    pre["pq5"], pre["pq5_correct"]
+                )
+            )
+
+            # SAVE POST-TEST
+            db.execute(
+                f"""
+                INSERT INTO {table}
+                (pq1, pq1_correct, pq2, pq2_correct, pq3, pq3_correct, pq4, pq4_correct, pq5, pq5_correct)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (pq1, correct1, pq2, correct2, pq3, correct3, pq4, correct4, pq5, correct5)
+            )
+
+            db.commit()
+
+            # CLEAR PRE-TEST FROM SESSION AFTER SAVING TO DB
+            session.pop('pretest_results', None)
+
+            return redirect(url_for('main.show'))
+            # END POST-TEST BLOCK
+
     return render_template('preSim.html', examples=examples, profession=profession, realname=realname)
+
+@bp.route('/start_posttest')
+def start_posttest():
+    db = get_db()
+
+    # COUNT HOW MANY RESPONSES ARE IN PRE-TEST AND POST-TEST TABLES
+    pre_count = db.execute("SELECT COUNT(*) FROM pre_sim_responses").fetchone()[0]
+    post_count = db.execute("SELECT COUNT(*) FROM sim_responses").fetchone()[0]
+
+    # IF USER COMPLETED PRE-TEST BUT HASN'T DONE POST-TEST, THEN CLEAR PRE-TEST RESPONSES TO START FRESH
+    if pre_count > 0 and post_count == 0:
+        db.execute("DELETE FROM pre_sim_responses")
+        db.commit()
+
+    # SET TEST MODE TO POST
+    session['test_mode'] = 'post'
+
+    return redirect(url_for('main.intermission'))
 
 @bp.route('/simulator', methods=['GET', 'POST'])
 def simulator_page():
-    if request.method == 'POST':
-        q1 = request.form.get('q1')
-        q2 = request.form.get('q2')
-        q3 = request.form.get('q3')
-        q4 = request.form.get('q4')
-        q5 = request.form.get('q5')
-        db = get_db()
-        db.execute("INSERT INTO sim_responses (q1, q2, q3, q4, q5) VALUES (?,?,?,?,?) ", (q1, q2, q3, q4, q5))
-        db.commit()
-        return redirect(url_for('main.simulator_page', submitted=1))
     return render_template('simulator.html')
 
 @bp.route('/test')
@@ -192,6 +271,8 @@ def show():
 
 @bp.route('/handle-profession', methods=['POST'])
 def handle_profession():
+    mode = session.get('test_mode', 'pre')
+
     profession = request.form.get('profession', '').strip()
     realname = request.form.get('realname', '').strip()
 
@@ -337,6 +418,7 @@ def handle_profession():
     session['profession'] = profession
     session['realname'] = realname
     session['generated_examples'] = ai_text
+    session['mode'] = mode
 
     session.modified = True
 
