@@ -173,16 +173,30 @@ def preSim_page():
         mode = session.get('test_mode', 'pre')
         table = "pre_sim_responses" if mode == 'pre' else "sim_responses"
 
-        # PRE-TEST SAVES TO SESSION ONLY
+        # PRE-TEST SAVES TO DB AND SESSION
         if mode == 'pre':
+            db = get_db()
+            db.execute(
+                """
+                INSERT INTO pre_sim_responses
+                (pq1, pq1_correct, pq2, pq2_correct, pq3, pq3_correct, pq4, pq4_correct, pq5, pq5_correct)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (pq1, correct1, pq2, correct2, pq3, correct3, pq4, correct4, pq5, correct5)
+            )
+            db.commit()
+
+            # SAVE PRETEST RESULTS TO SESSION FOR POSTTEST
             session['pretest_results'] = {
-                "pq1": pq1, "pq1_correct": correct1,
-                "pq2": pq2, "pq2_correct": correct2,
-                "pq3": pq3, "pq3_correct": correct3,
-                "pq4": pq4, "pq4_correct": correct4,
-                "pq5": pq5, "pq5_correct": correct5
+                'pq1': pq1, 'pq1_correct': correct1,
+                'pq2': pq2, 'pq2_correct': correct2,
+                'pq3': pq3, 'pq3_correct': correct3,
+                'pq4': pq4, 'pq4_correct': correct4,
+                'pq5': pq5, 'pq5_correct': correct5
             }
+
             return redirect(url_for('main.index'))
+
         # END PRE-TEST BLOCK 
 
         # POST-TEST SAVES BOTH TESTS 
@@ -231,20 +245,7 @@ def preSim_page():
 
 @bp.route('/start_posttest')
 def start_posttest():
-    db = get_db()
-
-    # COUNT HOW MANY RESPONSES ARE IN PRE-TEST AND POST-TEST TABLES
-    pre_count = db.execute("SELECT COUNT(*) FROM pre_sim_responses").fetchone()[0]
-    post_count = db.execute("SELECT COUNT(*) FROM sim_responses").fetchone()[0]
-
-    # IF USER COMPLETED PRE-TEST BUT HASN'T DONE POST-TEST, THEN CLEAR PRE-TEST RESPONSES TO START FRESH
-    if pre_count > 0 and post_count == 0:
-        db.execute("DELETE FROM pre_sim_responses")
-        db.commit()
-
-    # SET TEST MODE TO POST
     session['test_mode'] = 'post'
-
     return redirect(url_for('main.intermission'))
 
 @bp.route('/simulator', methods=['GET', 'POST'])
@@ -268,7 +269,8 @@ def show():
 
 @bp.route('/handle-profession', methods=['POST'])
 def handle_profession():
-    mode = session.get('test_mode', 'pre')
+    # IMPORTANT: preserve pretest_results during post-test
+    pretest_results = session.get('pretest_results')
 
     profession = request.form.get('profession', '').strip()
     realname = request.form.get('realname', '').strip()
@@ -415,7 +417,10 @@ def handle_profession():
     session['profession'] = profession
     session['realname'] = realname
     session['generated_examples'] = ai_text
-    session['mode'] = mode
+
+    # RESTORE pretest_results if this is the post-test
+    if pretest_results:
+        session['pretest_results'] = pretest_results
 
     session.modified = True
 
