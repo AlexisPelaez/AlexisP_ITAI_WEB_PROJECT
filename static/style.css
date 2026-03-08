@@ -53,7 +53,7 @@ html, body {
 
 /* END OF WELCOME PAGE CSS */
 .index-bg {
-    background-image: url('/static/media/lcy2.jpg');
+    background: rgba(0, 0, 0, 0.8);
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -61,21 +61,21 @@ html, body {
 }
 
 .info-bg {
-    background-image: url('/static/media/lcy1.jpg');
+    background: rgba(0, 0, 0, 0.8);
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     color: white;
 }
 .simulator-bg {
-    background-image: url('/static/media/lcy3.jpg');
+    background: rgba(0, 0, 0, 0.8);
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     color: white;
 }
 .data-bg {
-    background-image: url('/static/media/cy3_vid.gif');
+    background: rgba(0, 0, 0, 0.8);
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -138,4 +138,16 @@ nav.fixed-bottom {
 .flash-text {
     color:red;
     font-size: 1.5rem;
+}
+
+.phishing-demo {
+    color: white;
+}
+
+.phishing-demo pre {
+    color: white;
+    border-left: 4px solid #ff4d4d;
+    background: rgba(0,0,0,0.25);
+    padding: 15px;
+    border-radius: 8px;
 }

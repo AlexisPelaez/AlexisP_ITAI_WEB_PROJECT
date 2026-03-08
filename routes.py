@@ -1,4 +1,6 @@
-from flask import Blueprint, app, current_app,render_template, request, redirect, session, url_for
+from unittest import result
+
+from flask import Blueprint, app, current_app, jsonify,render_template, request, redirect, session, url_for
 from .db import get_db
 import re
 import json
@@ -6,72 +8,47 @@ from flask import flash
 from groq import RateLimitError, APIError
 
 
-def classify_profession(profession):
+def classify_inputs(profession, realname):
     prompt = f"""
-    You are a STRICT SECURITY FILTER for a profession-based email simulator.
+    You are a STRICT SECURITY FILTER for validating user inputs.
 
-    Your ONLY job is to classify the user-provided profession into one of three categories:
+    You must classify BOTH the profession and the real name.
 
-    - VALID: A real, workplace-appropriate profession or job title.
-    - INAPPROPRIATE: Explicit, sexual, violent, hateful, illegal, or otherwise unsafe for a workplace simulator.
-    - NONSENSE: Not a real profession. This includes random characters, repeated letters, jokes, memes, fictional roles, or meaningless strings.
+    CLASSIFICATION RULES:
 
-    SECURITY RULES:
-    - If the input contains symbols, emojis, or punctuation instead of letters (e.g., "###", "@@@", "!!!"), classify it as NONSENSE.
-    - If the input is fewer than 3 characters, classify it as NONSENSE.
-    - If the input is mostly repeated characters (e.g., "aaaaaa", "lololol", "zzzzzz"), classify it as NONSENSE.
-    - If the input is a joke, meme, insult, or non-job phrase (e.g., "your mom", "poop eater", "sigma grinder"), classify it as NONSENSE.
-    - If the input is fictional or impossible as a real-world job (e.g., "dragon slayer", "wizard king", "demon hunter"), classify it as NONSENSE.
-    - If the input refers to sexual content, adult entertainment, pornography, or explicit work, classify it as INAPPROPRIATE.
-    - If the input refers to violence, killing, weapons, terrorism, extremism, or organized crime, classify it as INAPPROPRIATE.
-    - If the input refers to clearly illegal activity (e.g., "drug dealer", "cartel boss", "hitman"), classify it as INAPPROPRIATE.
-    - If the input is ambiguous but could reasonably be a real job title, prefer VALID.
+    PROFESSION:
+    - VALID: A real, workplace-appropriate profession.
+    - INAPPROPRIATE: Explicit, sexual, violent, hateful, illegal, or unsafe.
+    - NONSENSE: Random characters, repeated letters, memes, fictional roles, or meaningless strings.
 
-    Respond ONLY in this exact JSON format:
-
-    {{
-      "label": "VALID or INAPPROPRIATE or NONSENSE",
-      "reason": "A short explanation of why you chose this label."
-    }}
-
-    User input: "{profession}"
-    """
-
-    completion = current_app.groq_client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[{"role": "user", "content": prompt}],
-        stream=False
-    )
-
-    return json.loads(completion.choices[0].message.content)
-
-def classify_realname(realname):
-    prompt = f"""
-    You are a STRICT SECURITY FILTER for validating human names.
-
-    Classify the input into one of three categories:
-
+    NAME:
     - VALID: A plausible human first or full name.
     - INAPPROPRIATE: Contains slurs, explicit content, hate speech, or offensive language.
-    - NONSENSE: Random characters, repeated letters, memes, jokes, fictional nonsense, or anything not resembling a real name.
+    - NONSENSE: Random characters, repeated letters, memes, jokes, fictional nonsense, or gamer tags.
 
-    SECURITY RULES:
-    - If the input contains symbols, emojis, or punctuation instead of letters (e.g., "###", "@@@", "!!!"), classify as NONSENSE.
-    - If the input is fewer than 2 characters, classify as NONSENSE.
-    - If the input is mostly repeated characters (e.g., "aaaaaa", "zzzzzz"), classify as NONSENSE.
-    - If the input is a meme, joke, insult, or phrase (e.g., "your mom", "poop", "sigma grinder"), classify as NONSENSE.
-    - If the input contains explicit, hateful, or offensive language, classify as INAPPROPRIATE.
-    - If the input resembles a gamer tag or handle (e.g., "xXx_killer_xXx"), classify as NONSENSE.
-    - If the input is ambiguous but could be a real name, prefer VALID.
+    SECURITY RULES FOR BOTH:
+    - Symbols, emojis, or punctuation instead of letters → NONSENSE.
+    - Mostly repeated characters → NONSENSE.
+    - Memes, jokes, insults, or phrases → NONSENSE.
+    - Explicit, hateful, or offensive → INAPPROPRIATE.
+    - Fictional or impossible roles → NONSENSE.
+    - Ambiguous but plausible → VALID.
 
     Respond ONLY in this JSON format:
 
     {{
-      "label": "VALID or INAPPROPRIATE or NONSENSE",
-      "reason": "A short explanation of why you chose this label."
+      "profession": {{
+        "label": "VALID or INAPPROPRIATE or NONSENSE",
+        "reason": "Short explanation."
+      }},
+      "realname": {{
+        "label": "VALID or INAPPROPRIATE or NONSENSE",
+        "reason": "Short explanation."
+      }}
     }}
 
-    User input: "{realname}"
+    User profession: "{profession}"
+    User realname: "{realname}"
     """
 
     completion = current_app.groq_client.chat.completions.create(
@@ -93,13 +70,62 @@ def start():
         return redirect(url_for('main.preSim_page'))
     return render_template('welcome.html')
 
-@bp.route('/index')
+@bp.route('/index', methods=['GET', 'POST'])
 def index():
     return render_template('index.html')
 
 @bp.route('/info')
 def info_page():
     return render_template('info.html')
+
+@bp.route('/info2')
+def info2_page():
+    raw = session.get('generated_examples')
+    phishing_example = None
+
+    if raw:
+        try:
+            examples = json.loads(raw)
+            phishing_example = next((e for e in examples if e["type"] == "phishing"), None)
+            if phishing_example:
+                phishing_example["body"] = phishing_example["body"].lstrip()
+        except:
+            phishing_example = None
+
+    return render_template('info2.html', phishing_example=phishing_example)
+
+@bp.route('/ask_helper_ai', methods=['POST'])
+def ask_helper_ai():
+    data = request.get_json()
+    question = data.get("question", "").strip()
+
+    if not question:
+        return jsonify({"answer": "Please type a question first."})
+
+    prompt = f"""
+    You are a cybersecurity helper AI. Your job is to explain concepts clearly and safely.
+
+    User question: "{question}"
+
+    Provide:
+    - a short explanation
+    - a simple example if helpful
+
+    Do NOT:
+    - generate phishing emails
+    - generate realistic malicious content
+    - imitate real companies or people
+    - provide instructions for harmful behavior
+    """
+
+    completion = current_app.groq_client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[{"role": "user", "content": prompt}],
+        stream=False
+    )
+
+    answer = completion.choices[0].message.content
+    return jsonify({"answer": answer})
 
 @bp.route('/intermission', methods=['GET', 'POST'])
 def intermission():
@@ -169,19 +195,18 @@ def handle_profession():
     profession = request.form.get('profession', '').strip()
     realname = request.form.get('realname', '').strip()
 
-    # EMPTY CHECKS FOR PROFESSION AND REAL NAME
-    if not profession or len(profession.strip()) == 0:
+    # EMPTY CHECKS
+    if not profession:
         flash("Please enter a profession.")
         return redirect(url_for('main.intermission'))
 
-    if not realname or len(realname.strip()) == 0:
+    if not realname:
         flash("Please enter your real name.")
         return redirect(url_for('main.intermission'))
 
-    # DEFENSE AGAINST INAPPROPRIATE OR UNSAFE PROFESSIONS OR NAMES
-
+    # CALL IN CASE OF RATE LIMIT OR API ERRORS
     try:
-        classification = classify_profession(profession)
+        result = classify_inputs(profession, realname)
     except RateLimitError:
         flash("The system is temporarily busy. Please try again in a moment.")
         return redirect(url_for('main.intermission'))
@@ -189,30 +214,23 @@ def handle_profession():
         flash("There was an issue contacting the AI service. Please try again.")
         return redirect(url_for('main.intermission'))
 
-    if classification["label"] == "INAPPROPRIATE":
+    # PROFESSION LOGIC
+    prof_label = result["profession"]["label"]
+
+    if prof_label == "INAPPROPRIATE":
         profession = "Unemployed"
 
-    elif classification["label"] == "NONSENSE":
-        flash(classification["reason"])
+    elif prof_label == "NONSENSE":
+        flash(result["profession"]["reason"])
         return redirect(url_for('main.intermission'))
 
-    # DEFENSE AGAINST INAPPROPRIATE OR UNSAFE REAL NAMES
-    name_classification = classify_realname(realname)
+    # REAL NAME LOGIC
+    name_label = result["realname"]["label"]
 
-    if name_classification["label"] == "INAPPROPRIATE":
-        flash(name_classification["reason"])
+    if name_label in ["INAPPROPRIATE", "NONSENSE"]:
+        flash(result["realname"]["reason"])
         return redirect(url_for('main.intermission'))
 
-    elif name_classification["label"] == "NONSENSE":
-        flash(name_classification["reason"])
-        return redirect(url_for('main.intermission'))
-
-    if not profession:
-        return "No profession provided", 400
-    if not realname:
-        return "No name provided", 400
-
-    # Build prompt for Groq
     prompt = f"""
     Generate ONLY 5 full-length workplace emails for someone working as a {profession}.
     Use the recipient's real name: {realname}.
@@ -315,15 +333,13 @@ def handle_profession():
 
     ai_text = completion.choices[0].message.content
 
-    # Store in session so PreSim can use it later
+    # Store the profession, real name, and raw AI output in the session for later use
     session['profession'] = profession
     session['realname'] = realname
     session['generated_examples'] = ai_text
 
-    # Mark the session as modified to ensure it gets saved
     session.modified = True
 
-    # Redirect to your existing PreSim page
     return redirect(url_for('main.preSim_page'))
 
 

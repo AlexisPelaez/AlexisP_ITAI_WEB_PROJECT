@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="info-bg">
+    <nav class="navbar navbar-expand-lg navbar-dark glass-nav outline-thin">
+        <div class="container-fluid">
+            <a class="navbar-brand mb-0 h1" href="#">DeTech</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                  <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+                  <a class="nav-link active" aria-current="page" href="{{ url_for('main.info_page') }}">Info</a>
+                  <a class="nav-link" href="{{ url_for('main.simulator_page') }}">Simulator</a>
+                  <a class="nav-link" href="{{ url_for('main.show') }}">Data</a>
+                </div>
+              </div>
+        </div>
+    </nav>
+    <div class="container-fluid page-content">
+        <div class="row align-items-start">
+            <div class="col-md-6 text-blur">
+                <h1>How to Spot Phishing Emails</h1>
+                <br>
+
+                <!-- SENDER IDENTITY -->
+                <div class="mb-3">
+                    <button class="btn btn-secondary w-100 text-start" data-bs-toggle="collapse" data-bs-target="#senderSection">
+                        ✉️ The sender is not who they claim to be
+                    </button>
+                    <div id="senderSection" class="collapse mt-2">
+                        <p>Attackers often impersonate real companies or coworkers, but the email address may not give them away</p>
+                        <ul>
+                            <li>Example: Misspelled Domains (e.g., "paypa1.com" instead of "paypal.com") </li>
+                            <li>Example: Extra words (e.g, "paypal-security-team.net")</li>
+                            <li>Example: Wrong top-level domains (e.g., ".info, .site, .xyz instead of .edu or .gov")</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- URGENCY -->
+                <div class="mb-3">
+                    <button class="btn btn-secondary w-100 text-start" data-bs-toggle="collapse" data-bs-target="#urgencySection">
+                        ⏳ The message creates a sense of urgency or fear
+                    </button>
+                    <div id="urgencySection" class="collapse mt-2">
+                        <p>Phishing emails often use alarming language or threats to pressure you into acting quickly without thinking.</p>
+                        <ul>
+                            <li>Example: "Your account will be suspended unless you verify your information immediately!"</li>
+                            <li>Example: "Your package delivery has failed. Click here to reschedule!"</li>
+                            <li>Example: "We detected suspicious activity on your account. Please log in to secure it!"</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- SUSPICIOUS LINKS -->
+                <div class="mb-3">
+                    <button class="btn btn-secondary w-100 text-start" data-bs-toggle="collapse" data-bs-target="#linksSection">
+                        🔍 The link looks almost legitimate but has subtle red flags
+                    </button>
+                    <div id="linksSection" class="collapse mt-2">
+                        <p>Hover over links to see the actual URL before clicking. Phishing emails often use URLs that look similar to legitimate ones but may have slight misspellings or additional characters.</p>
+                        <ul>
+                            <li>Example: "https://www.paypa1.com" instead of "https://www.paypal.com"</li>
+                            <li>Example: "https://www.amazon-secure.com" instead of "https://www.amazon.com"</li>
+                            <li>Example: "https://www.apple-support.com" instead of "https://www.apple.com"</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- SENSITIVE INFORMATION -->
+                <div class="mb-3">
+                    <button class="btn btn-secondary w-100 text-start" data-bs-toggle="collapse" data-bs-target="#infoSection">
+                        🔒 The email asks for sensitive information
+                    </button>
+                    <div id="infoSection" class="collapse mt-2">
+                        <p>Legitimate organizations will never ask you to provide sensitive information (like passwords, credit card numbers, or social security numbers) via email. If you receive such a request, it's likely a phishing attempt.</p>
+                        <ul>
+                            <li>Example: "Please reply with your password to verify your account."</li>
+                            <li>Example: "Click this link and enter your credit card information to receive a refund."</li>
+                            <li>Example: "We need your social security number to process your application. Please fill out the attached form."</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- TONE MISMATCH -->
+                <div class="mb-3">
+                    <button class="btn btn-secondary w-100 text-start" data-bs-toggle="collapse" data-bs-target="#toneSection">
+                        🗣️ The tone does not match the organization
+                    </button>
+                    <div id="toneSection" class="collapse mt-2">
+                        <p>Phishing emails often have a tone that doesn't match the organization's usual communication style. They may be overly formal, too casual, or contain spelling and grammar errors.</p>
+                        <ul>
+                            <li>Example: "Dear Valued Customer, We are writing to inform you of a security breach on your account. Please click the link below to secure your account immediately."</li>
+                            <li>Example: "Hey there! We noticed some weird activity on your account. Can you click this link and check it out?"</li>
+                            <li>Example: "Congratulations! You've won a free iPhone! Click here to claim your prize!"</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="table-responsive my-4">
+                    <table class="table table-bordered table-striped comparison-table">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">Real Email</th>
+                                <th scope="col">Phishing Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Comes from a verified, correctly spelled domain (e.g., <strong>@university.edu</strong>).</td>
+                                <td>Uses look-alike or misspelled domains (e.g., <strong>@university-it-support.com</strong>).</td>
+                            </tr>
+                            <tr>
+                                <td>Calm, professional tone with no pressure.</td>
+                                <td>Creates urgency or fear (“Your account will be closed today”).</td>
+                            </tr>
+                            <tr>
+                                <td>Links match the organization's real website.</td>
+                                <td>Links redirect to unknown or suspicious domains.</td>
+                            </tr>
+                            <tr>
+                                <td>Never asks for passwords or sensitive information.</td>
+                                <td>Requests login credentials, MFA codes, or personal data.</td>
+                            </tr>
+                            <tr>
+                                <td>Expected communication based on your role or recent activity.</td>
+                                <td>Unexpected or out-of-context messages (“Invoice attached” when you don't handle invoices).</td>
+                            </tr>
+                            <tr>
+                                <td>Proper grammar, formatting, and consistent branding.</td>
+                                <td>Odd phrasing, formatting issues, or inconsistent branding.</td>
+                            </tr>
+                            <tr>
+                                <td>Attachments are expected and relevant.</td>
+                                <td>Unsolicited attachments, especially ZIP, EXE, or HTML files.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2>If you think an email might be a phishing attempt:</h2>
+                <ul>
+                    <li>Don't click on any links or download attachments.</li>
+                    <li>Don't reply to the email.</li>
+                    <li>Report it to your IT department or the organization directly.</li>
+                    <li>Delete the email from your inbox.</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                {% if phishing_example %}
+                    <div class="phishing-demo mt-0 mb-4 p-4 rounded shadow text-blur text-white">
+                        <h2>Example From Your Pre-Test</h2>
+                        <p>This is one of the phishing emails you saw earlier. Compare it to the red flags on the left.</p>
+
+                        <h4 class="mt-3"><strong>Subject:</strong> {{ phishing_example.subject }}</h4>
+
+                        <pre style="white-space: pre-wrap; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">{{ phishing_example.body}}</pre>
+
+
+                        <p><strong>Difficulty:</strong> {{ phishing_example.difficulty }}</p>
+                        <p><strong>Red Flag:</strong> {{ phishing_example.red_flag }}</p>
+                    </div>
+                {% endif %}
+
+                <div class="ai-helper-box p-3 mt-3 rounded" style="background: rgba(0,0,0,0.25); backdrop-filter: blur(4px); color: white;">
+                    <h4>Still confused? Ask the AI for help.</h4>
+                    <p>Type what you're unsure about, and the AI will give a simple explanation.</p>
+
+                    <textarea id="helperInput" class="form-control mb-2" rows="2"
+                            placeholder="Example: What does a suspicious link look like?"></textarea>
+
+                    <button class="btn btn-primary" onclick="askHelperAI()">Get Help</button>
+                <div id="helperResponse" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav class="navbar navbar-dark glass-nav fixed-bottom outline-thin">
+        <div class="container-fluid justify-content-center">
+            <a class="nav-link text-light mx-3" href="mailto:contact@detech.com">Email: contact@detech.com</a>
+            <a class="nav-link text-light mx-3" href="tel:+15555555555">Call: +1 555-555-5555</a>
+            <a class="nav-link text-light mx-3">Contact Form</a>
+            <a class="nav-link text-light mx-3 footer-credit" href="http://www.freepik.com" target="_blank">Designed by Freepik</a> <!-- Credit for background -->
+        </div>
+    </nav>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='helper_ai.js') }}"></script>
+</body>
+</html>
