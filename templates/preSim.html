@@ -11,8 +11,6 @@
     <div class="container-fluid page-content outline-thin">
         <div class="row">
             <div class="col-lg-6 col-md-12">
-                <h1>The Simulator</h1>
-                <p>Below are 5 emails generated for someone working as a {{ profession }}. For each email, choose whether it is phishing, real, or if you are unsure.</p>
                 <form method="POST" action="{{ url_for('main.preSim_page') }}">
                     {% if examples %}
                         {% for email in examples %}
