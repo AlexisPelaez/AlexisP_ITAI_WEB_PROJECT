@@ -31,21 +31,30 @@ def classify_inputs(profession, realname):
     - Fictional or impossible roles → NONSENSE.
     - Ambiguous but plausible → VALID.
 
-    Respond ONLY in this JSON format:
+    You MUST respond ONLY with valid JSON.
+    Do NOT include explanations, apologies, or extra text.
+    Do NOT include markdown.
+    Your entire response MUST be a single JSON object.
+
+    Return JSON in this EXACT structure:
 
     {{
-      "profession": {{
-        "label": "VALID or INAPPROPRIATE or NONSENSE",
-        "reason": "Short explanation."
-      }},
-      "realname": {{
-        "label": "VALID or INAPPROPRIATE or NONSENSE",
-        "reason": "Short explanation."
-      }}
+        "profession": {{
+            "label": "VALID | INAPPROPRIATE | NONSENSE",
+            "reason": "string"
+        }},
+        "realname": {{
+            "label": "VALID | INAPPROPRIATE | NONSENSE",
+            "reason": "string"
+        }}
     }}
 
-    User profession: "{profession}"
-    User realname: "{realname}"
+
+    Now classify the following inputs:
+
+    Profession: "{profession}"
+    Real Name: "{realname}"
+
     """
 
     completion = current_app.groq_client.chat.completions.create(
@@ -54,7 +63,17 @@ def classify_inputs(profession, realname):
         stream=False
     )
 
-    return json.loads(completion.choices[0].message.content)
+    raw = completion.choices[0].message.content
+
+    # SAFETY WRAPPER — prevents crashes
+    try:
+        return json.loads(raw)
+    except Exception:
+        print("AI returned invalid JSON:", raw)
+        return {
+            "profession": {"label": "NONSENSE", "reason": "AI returned invalid JSON"},
+            "realname": {"label": "NONSENSE", "reason": "AI returned invalid JSON"}
+        }
 
 
 bp = Blueprint('main',__name__)
@@ -65,7 +84,7 @@ bp = Blueprint('main',__name__)
 def start():
     if request.method == 'POST':
         session['test_mode'] = 'pre'
-        return redirect(url_for('main.preSim_page'))
+        return redirect(url_for('main.intermission'))
     return render_template('welcome.html')
 
 
@@ -132,6 +151,20 @@ def intermission():
 
 @bp.route('/preSim', methods=['GET', 'POST'])
 def preSim_page():
+    # PRETEST + POSTTEST ENTRY GUARD
+    mode = session.get('test_mode', 'pre')
+
+    # Must have examples (both pre and post need this)
+    if 'generated_examples' not in session:
+        flash("Please start the simulator first.")
+        return redirect(url_for('main.intermission'))
+
+    # POST-TEST ONLY: must have pretest_results
+    if mode == 'post' and 'pretest_results' not in session:
+        flash("Please complete the pre-test before starting the post-test.")
+        return redirect(url_for('main.index'))
+
+    
     raw = session.get('generated_examples')
     profession = session.get('profession')
     realname = session.get('realname')
@@ -412,7 +445,12 @@ def handle_profession():
     )
 
     ai_text = completion.choices[0].message.content
-
+    # SAFETY CHECK
+    if not ai_text or len(ai_text.strip()) < 10:
+        print("AI returned no examples:", ai_text)
+        flash("The AI could not generate examples. Please try again.")
+        return redirect(url_for('main.intermission'))
+    
     # Store the profession, real name, and raw AI output in the session for later use
     session['profession'] = profession
     session['realname'] = realname
