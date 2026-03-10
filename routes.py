@@ -80,8 +80,24 @@ bp = Blueprint('main',__name__)
 
 # SIMPLE PAGE REDIRECTS FOR HTML PAGES
 
+PASSWORD = "PhishingU"   # CHANGE DEPENDING ON WHATEVER YOU WANT
+
+@bp.route("/access", methods=["GET", "POST"])
+def access():
+    if request.method == "POST":
+        pwd = request.form.get("access_password", "")
+        if pwd == PASSWORD:
+            session["access_granted"] = True
+            return redirect(url_for("main.start"))
+        else:
+            flash("Incorrect password.")
+    return render_template("access.html")
+
+
 @bp.route('/', methods=['GET', 'POST'])
 def start():
+    if not session.get("access_granted"):
+        return redirect(url_for("main.access"))
     if request.method == 'POST':
         session['test_mode'] = 'pre'
         return redirect(url_for('main.intermission'))
@@ -90,14 +106,20 @@ def start():
 
 @bp.route('/index', methods=['GET', 'POST'])
 def index():
+    if not session.get("access_granted"):
+        return redirect(url_for("main.access"))
     return render_template('index.html')
 
 @bp.route('/info')
 def info_page():
+    if not session.get("access_granted"):
+        return redirect(url_for("main.access"))
     return render_template('info.html')
 
 @bp.route('/info2')
 def info2_page():
+    if not session.get("access_granted"):
+        return redirect(url_for("main.access"))
     raw = session.get('generated_examples')
     phishing_example = None
 
@@ -114,6 +136,8 @@ def info2_page():
 
 @bp.route('/ask_helper_ai', methods=['POST'])
 def ask_helper_ai():
+    if not session.get("access_granted"):
+        return redirect(url_for("main.access"))
     data = request.get_json()
     question = data.get("question", "").strip()
 
@@ -147,10 +171,14 @@ def ask_helper_ai():
 
 @bp.route('/intermission', methods=['GET', 'POST'])
 def intermission():
+    if not session.get("access_granted"):
+        return redirect(url_for("main.access"))
     return render_template('intermission.html')
 
 @bp.route('/preSim', methods=['GET', 'POST'])
 def preSim_page():
+    if not session.get("access_granted"):
+        return redirect(url_for("main.access"))
     # PRETEST + POSTTEST ENTRY GUARD
     mode = session.get('test_mode', 'pre')
 
@@ -278,30 +306,43 @@ def preSim_page():
 
 @bp.route('/start_posttest')
 def start_posttest():
+    if not session.get("access_granted"):
+        return redirect(url_for("main.access"))
     session['test_mode'] = 'post'
     return redirect(url_for('main.intermission'))
 
 @bp.route('/simulator', methods=['GET', 'POST'])
 def simulator_page():
+    if not session.get("access_granted"):
+        return redirect(url_for("main.access"))
     return render_template('simulator.html')
 
 @bp.route('/test')
 def test_page():
+    if not session.get("access_granted"):
+        return redirect(url_for("main.access"))
     return render_template('test.html')
 
 # SPECIAL PAGE REDIRECTS
 
 @bp.route('/show')
 def show():
+    if not session.get("access_granted"):
+        return redirect(url_for("main.access"))
     db = get_db()
     sim_responses = db.execute("SELECT * FROM sim_responses").fetchall()
     preSim_responses = db.execute("SELECT * FROM pre_sim_responses").fetchall()
 
+    # User reached the data page → clear access for next time
+    session.pop("access_granted", None)
 
     return render_template('data.html', sim_responses=sim_responses, preSim_responses=preSim_responses)
 
 @bp.route('/handle-profession', methods=['POST'])
 def handle_profession():
+    if not session.get("access_granted"):
+        return redirect(url_for("main.access"))
+        
     # IMPORTANT: preserve pretest_results during post-test
     pretest_results = session.get('pretest_results')
 
