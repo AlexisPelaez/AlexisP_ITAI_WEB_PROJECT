@@ -33,7 +33,12 @@ def create_app():
     # Register database functions
     from . import db
     db.init_app(app)
-
+    
+    # Initialize DB on first request
+    @app.before_first_request
+    def initialize_database():
+        db.init_db()
+        
     # Register routes
     from . import routes
     app.register_blueprint(routes.bp)
