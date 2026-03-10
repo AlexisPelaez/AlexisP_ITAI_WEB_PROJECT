@@ -34,7 +34,7 @@ def create_app():
     from . import db
     db.init_app(app)
 
-    # Initialize DB at startup (Flask 3 removed before_first_request)
+    # Initialize DB at startup
     with app.app_context():
         db.init_db()
 
