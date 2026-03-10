@@ -5,9 +5,11 @@ from groq import Groq
 
 def create_app():
     app = Flask(
-        __name__,
-        instance_path=os.path.join(os.path.dirname(__file__), "instance"),
-        instance_relative_config=True
+    __name__,
+    static_folder="../static",
+    template_folder="../templates",
+    instance_path=os.path.join(os.path.dirname(__file__), "instance"),
+    instance_relative_config=True
     )
     
     # Secret key for sessions
