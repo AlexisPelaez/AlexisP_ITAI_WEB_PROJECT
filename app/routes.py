@@ -1,7 +1,6 @@
-from flask import Blueprint, app, current_app, jsonify,render_template, request, redirect, session, url_for
+from flask import Blueprint, current_app, jsonify, render_template, request, redirect, session, url_for, flash
 from .db import get_db
 import json
-from flask import flash
 from groq import RateLimitError, APIError
 
 
