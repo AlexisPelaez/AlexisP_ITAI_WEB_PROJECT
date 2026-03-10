@@ -438,13 +438,19 @@ def handle_profession():
     ]
     """
 
-    completion = current_app.groq_client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[{"role": "user", "content": prompt}],
-        stream=False
-    )
+    try:
+        completion = current_app.groq_client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[{"role": "user", "content": prompt}],
+            stream=False
+        )
+        ai_text = completion.choices[0].message.content
 
-    ai_text = completion.choices[0].message.content
+    except Exception as e:
+        print("Email generation failed:", e)
+        flash("The AI is currently unavailable. Please try again after the daily token reset.")
+        return redirect(url_for('main.intermission'))
+
     # SAFETY CHECK
     if not ai_text or len(ai_text.strip()) < 10:
         print("AI returned no examples:", ai_text)
