@@ -379,13 +379,36 @@ def handle_profession():
     - If the provided profession is violent, illegal, hateful, explicit, or otherwise inappropriate for workplace email simulation, you MUST NOT generate emails for that profession. Instead, reinterpret the profession as a neutral, safe, workplace-appropriate role that is adjacent or analogous. You MUST NOT mention that you reinterpreted the profession. Simply generate the emails using the safe replacement profession.
 
     PHISHING & LEGITIMATE EMAIL REQUIREMENTS
-    - Phishing emails MUST each differ in their red flags. Do NOT make all phishing emails have the same red flag. Make one of the phishing emails incredibly easy to identify as a phishing email, with multiple red flags. Make another phishing email more subtle, with only one red flag that is not super obvious. Make the third phishing email somewhere in between, with 2-3 red flags that are somewhat obvious but could potentially be missed by someone who is not paying close attention.
+    - Phishing emails MUST each differ in their red flags. Do NOT make all phishing emails have the same red flag. Make one of the phishing emails incredibly easy to identify as a phishing email, with multiple red flags. Make another phishing email more subtle, with only one red flag that is not super obvious. Make the third phishing email extremely realistic and difficult to identify as phishing, with only a very subtle red flag that could be easily missed by someone who is not paying close attention.
     - Each email MUST have a professiomal tone appropriate for the workplace, even the phishing ones. Do NOT make the phishing emails sound overly dramatic or unrealistic.
     - Each email MUST include profession-specific terminology, tools, workflows, or realistic scenarios that someone in the {profession} field would encounter.
     - Do NOT repeat sentences or ideas. All content must be unique and meaningful.
     - All five subject lines MUST be unique and must not reuse the same structure or phrasing. For example, do NOT make all the subject lines follow the same format of "Action Required: [Task]". Instead, create a variety of subject line styles that are appropriate for workplace emails in the {profession} field.
     - Each email MUST describe a different scenario, workflow, or situation. Do NOT reuse the same storyline or context across multiple emails. Each email should present a distinct situation that someone in the {profession} field might realistically encounter.
     - Phishing emails MUST NOT all rely on password resets, account lockouts, or credential updates. Only one phishing email may use this theme. The other phishing emails should use different themes, such as invoice/payment fraud, fake meeting invites, impersonation of colleagues or supervisors, or requests for sensitive information.
+
+    PHISHING RED FLAG HINT OPTIONS (AI MUST CHOOSE DIFFERENT ONES)
+    To ensure variety, each phishing email MUST select its red flags from the list below. 
+    Each phishing email MUST use a different combination of hints, and MUST NOT reuse the same primary red flag theme as another phishing email.
+
+    ALLOWED RED FLAG HINTS:
+    1. Suspicious or mismatched sender domain (e.g., off-brand variation of a known vendor).
+    2. Unexpected request for payment, invoice confirmation, or financial details.
+    3. Fake meeting invitation or calendar link that does not match normal workflow.
+    4. Impersonation of a colleague or supervisor with subtle inconsistencies.
+    5. Request for sensitive information that would never be asked over email.
+    6. Urgent tone that pressures immediate action without proper verification steps.
+    7. Slightly altered URL that resembles a legitimate service but is incorrect.
+    8. Reference to a system, tool, or process that does not exist in the organization.
+    9. Grammar, formatting, or phrasing that is slightly off from normal professional communication.
+    10. Your own extremely subtle idea that is not on this list but still a valid red flag (but remember, each phishing email must use a different primary red flag theme, so if you use this option for one email, you cannot reuse the same primary red flag theme for another email).
+
+    RULES FOR USING THESE HINTS:
+    - The “least-difficult” phishing email MUST use multiple obvious hints from this list.
+    - The “semi-difficult” phishing email MUST use 2-3 moderately noticeable hints.
+    - The “most-difficult” phishing email MUST use only ONE subtle hint from this list.
+    - The AI MUST NOT invent new red-flag categories outside this list.
+    - The AI MUST NOT reuse the same primary red-flag theme across phishing emails.
 
     FORMATTING & STRUCTURE RULES
     - Return ONLY valid JSON.
@@ -400,10 +423,11 @@ def handle_profession():
     - You MUST escape all newline characters as \\n.
 
     - LENGTH & SENTENCE REQUIREMENTS:
-    - Each paragraph MUST contain 4–6 full sentences.
-    - Each email MUST contain exactly 4 paragraphs, plus a greeting line and a closing line.
-    - Each email MUST be between 280 and 320 words. Do NOT produce fewer than 280 words under any circumstances.
-    - Avoid short or vague sentences. Each sentence should contain meaningful detail and be at least 12–18 words long.
+    - Each paragraph MUST contain 3-4 full sentences.
+    - Each email MUST contain exactly 3 paragraphs, plus a greeting line and a closing line.
+    - Each email MUST be between 150 and 200 words.
+    - Sentences must still be meaningful and detailed, not short fragments.
+
 
     NAME/SENDER RULES: 
     - Sender names MUST be diverse and varied across all five emails. Do NOT reuse the same first or last name more than once.
@@ -414,7 +438,7 @@ def handle_profession():
 
     DIFFICULTY LABEL RULES (IMPORTANT):
     - "least-difficult" = The phishing email that is extremely obvious, with multiple red flags.
-    - "semi-difficult" = The phishing email that has 2–3 red flags that are noticeable but not extremely obvious.
+    - "semi-difficult" = The phishing email that has 2-3 red flags that are noticeable but not extremely obvious.
     - "most-difficult" = The phishing email that is subtle, with only one red flag that could be easily missed.
     - "n/a" = Used ONLY for legitimate emails.
     
@@ -429,7 +453,7 @@ def handle_profession():
     - you MUST NOT use real people's names,
     - you MUST NOT claim the event is a specific historical incident. Instead, you should create a fictionalized version of a real news pattern that sounds like it could be real news coverage, without referencing any specific copyrighted content. For example, if the profession is related to cybersecurity, you might create a fictionalized email about "a widespread data breach affecting multiple organizations last month" that includes realistic details about the breach and its impact, without referencing any specific real-world incident or using any real names.
     You ARE allowed to create fictionalized versions of real news patterns (e.g., “a multi-state tornado outbreak last month,” “a major financial depression affecting several counties,” “a widespread data breach affecting multiple organizations”). These fictionalized events MUST sound like real news coverage without referencing copyrighted content.
-    The email with the event MUST include a short explanation in "real_world_event_description" describing the event in 1–2 sentences.
+    The email with the event MUST include a short explanation in "real_world_event_description" describing the event in 1-2 sentences.
 
     UNEMPLOYED OVERRIDE RULE:
     If the profession has been set to “Unemployed,” you MUST override the normal email content rules. 
@@ -451,7 +475,7 @@ def handle_profession():
     [
     {{
         "subject": "A realistic subject line",
-        "body": "Dear {realname},\\n\\nParagraph 1 with 4–6 detailed sentences that introduce the purpose of the email and provide meaningful context.\\n\\nParagraph 2 with 4–6 sentences that expand on the situation, include specific details, and reference realistic workplace processes.\\n\\nParagraph 3 with 4–6 sentences that add additional information, follow-up actions, or clarifications.\\n\\nParagraph 4 with 4–6 sentences that conclude the message, reinforce next steps, and maintain a professional tone.\\n\\nSincerely,\\nSender Name",
+        "body": "Dear {realname},\\n\\nParagraph 1 with 2-3 detailed sentences that introduce the purpose of the email and provide meaningful context.\\n\\nParagraph 2 with 2-3 sentences that expand on the situation, include specific details, and reference realistic workplace processes.\\n\\nParagraph 3 with 2-3 sentences that conclude the message, reinforce next steps, and maintain a professional tone.\\n\\nSincerely,\\nSender Name",
         "type": "phishing | real",
         "difficulty": "most-difficult | semi-difficult | least-difficult | n/a",
         "real_world_event": "yes | no",
