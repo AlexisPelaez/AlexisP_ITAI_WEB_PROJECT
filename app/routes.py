@@ -432,12 +432,6 @@ def handle_profession():
     9. Grammar, formatting, or phrasing that is slightly off from normal professional communication.
     10. Attachment with an unusual file type or unexpected content.
 
-    RULES FOR USING THESE HINTS:
-    - The “least-difficult” phishing email MUST use multiple obvious hints from this list.
-    - The “semi-difficult” phishing email MUST use 2-3 moderately noticeable hints.
-    - The “most-difficult” phishing email MUST use only ONE subtle hint from this list.
-    - The AI MUST NOT invent new red-flag categories outside this list.
-    - The AI MUST NOT reuse the same primary red-flag theme across phishing emails.
 
     FORMATTING & STRUCTURE RULES
     - Return ONLY valid JSON.
@@ -466,9 +460,9 @@ def handle_profession():
     - Each sender MUST include a realistic job role or implied position based on the email content (e.g., “Field Operations Coordinator,” “Data Analysis Lead,” “Equipment Logistics Manager,” “Safety Compliance Officer”). Add their job titles at the end of their names. Do NOT repeat job roles across emails.
 
     DIFFICULTY LABEL RULES (IMPORTANT):
-    - "least-difficult" = The phishing email that is extremely obvious, with multiple red flags.
-    - "semi-difficult" = The phishing email that has 2-3 red flags that are noticeable but not extremely obvious.
-    - "most-difficult" = The phishing email that is subtle, with only one red flag that could be easily missed.
+    - "least-difficult" = The phishing email that is extremely obvious, with multiple red flags. It MUST use multiple obvious hints from the allowed red flag list.
+    - "semi-difficult" = The phishing email that has 2-3 red flags that are noticeable but not extremely obvious. It MUST use 2-3 moderately noticeable red flag hints.
+    - "most-difficult" = The phishing email that is subtle, with only one red flag that could be easily missed. It MUST use only ONE subtle hint from this list.
     - "n/a" = Used ONLY for legitimate emails.
     
     REAL-WORLD NEWS EVENT RULES (IMPORTANT):
