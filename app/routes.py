@@ -423,9 +423,9 @@ def handle_profession():
     - You MUST escape all newline characters as \\n.
 
     - LENGTH & SENTENCE REQUIREMENTS:
-    - Each paragraph MUST contain 2-3 full sentences.
+    - Each paragraph MUST contain 3-4 full sentences.
     - Each email MUST contain exactly 3 paragraphs, plus a greeting line and a closing line.
-    - Each email MUST be between 150 and 200 words.
+    - Each email MUST be between 175 and 225 words.
     - Sentences must still be meaningful and detailed, not short fragments.
 
 
@@ -475,7 +475,7 @@ def handle_profession():
     [
     {{
         "subject": "A realistic subject line",
-        "body": "Dear {realname},\\n\\nParagraph 1 with 2-3 detailed sentences that introduce the purpose of the email and provide meaningful context.\\n\\nParagraph 2 with 2-3 sentences that expand on the situation, include specific details, and reference realistic workplace processes.\\n\\nParagraph 3 with 2-3 sentences that conclude the message, reinforce next steps, and maintain a professional tone.\\n\\nSincerely,\\nSender Name",
+        "body": "Dear {realname},\\n\\nParagraph 1 with 3-4 detailed sentences that introduce the purpose of the email and provide meaningful context.\\n\\nParagraph 2 with 3-4 sentences that expand on the situation, include specific details, and reference realistic workplace processes.\\n\\nParagraph 3 with 3-4 sentences that conclude the message, reinforce next steps, and maintain a professional tone.\\n\\nSincerely,\\nSender Name",
         "type": "phishing | real",
         "difficulty": "most-difficult | semi-difficult | least-difficult | n/a",
         "real_world_event": "yes | no",
