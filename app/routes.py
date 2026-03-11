@@ -83,6 +83,14 @@ bp = Blueprint('main',__name__)
 
 PASSWORD = "PhishingU"   # CHANGE DEPENDING ON WHATEVER YOU WANT
 
+@bp.route('/reset-db')
+def reset_db():
+    from app import db
+    db.drop_all()
+    db.create_all()
+    return "Database reset!"
+
+
 @bp.route("/access", methods=["GET", "POST"])
 def access():
     if request.method == "POST":
@@ -260,8 +268,12 @@ def preSim_page():
                 'pq5': pq5, 'pq5_correct': correct5
             }
 
-            return redirect(url_for('main.index'))
+            # Mark pre-test as completed (prevents duplicates)
+            session["pretest_completed"] = True
+            session.modified = True
 
+            # PRG redirect — prevents double submission
+            return redirect(url_for('main.index'))
 
         # POST-TEST
         if mode == 'post':
@@ -418,7 +430,7 @@ def handle_profession():
     7. Slightly altered URL that resembles a legitimate service but is incorrect.
     8. Reference to a system, tool, or process that does not exist in the organization.
     9. Grammar, formatting, or phrasing that is slightly off from normal professional communication.
-    10. Your own extremely subtle idea that is not on this list but still a valid red flag (but remember, each phishing email must use a different primary red flag theme, so if you use this option for one email, you cannot reuse the same primary red flag theme for another email).
+    10. Attachment with an unusual file type or unexpected content.
 
     RULES FOR USING THESE HINTS:
     - The “least-difficult” phishing email MUST use multiple obvious hints from this list.
