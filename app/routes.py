@@ -3,6 +3,7 @@ from .models import PreSimResponse, SimResponse
 from . import db
 import json
 from groq import RateLimitError, APIError
+import uuid
 
 
 def classify_inputs(profession, realname):
@@ -98,9 +99,16 @@ def access():
 def start():
     if not session.get("access_granted"):
         return redirect(url_for("main.access"))
+
     if request.method == 'POST':
         session['test_mode'] = 'pre'
+
+        # Generate a unique ID for this user's test session
+        session["test_run_id"] = str(uuid.uuid4())
+        session.modified = True
+
         return redirect(url_for('main.intermission'))
+
     return render_template('welcome.html')
 
 
@@ -229,6 +237,7 @@ def preSim_page():
         # PRE-TEST
         if mode == 'pre':
             entry = PreSimResponse(
+                test_run_id=session["test_run_id"],
                 pq1=pq1, pq1_correct=correct1,
                 pq2=pq2, pq2_correct=correct2,
                 pq3=pq3, pq3_correct=correct3,
@@ -248,6 +257,7 @@ def preSim_page():
 
             return redirect(url_for('main.index'))
 
+
         # POST-TEST
         if mode == 'post':
             pre = session.get('pretest_results')
@@ -256,6 +266,7 @@ def preSim_page():
 
             # Save PRE-TEST to DB
             pre_entry = PreSimResponse(
+                test_run_id=session["test_run_id"],
                 pq1=pre["pq1"], pq1_correct=pre["pq1_correct"],
                 pq2=pre["pq2"], pq2_correct=pre["pq2_correct"],
                 pq3=pre["pq3"], pq3_correct=pre["pq3_correct"],
@@ -266,6 +277,7 @@ def preSim_page():
 
             # Save POST-TEST to DB
             post_entry = SimResponse(
+                test_run_id=session["test_run_id"],
                 pq1=pq1, pq1_correct=correct1,
                 pq2=pq2, pq2_correct=correct2,
                 pq3=pq3, pq3_correct=correct3,
