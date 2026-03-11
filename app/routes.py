@@ -423,7 +423,7 @@ def handle_profession():
     - You MUST escape all newline characters as \\n.
 
     - LENGTH & SENTENCE REQUIREMENTS:
-    - Each paragraph MUST contain 3-4 full sentences.
+    - Each paragraph MUST contain 2-3 full sentences.
     - Each email MUST contain exactly 3 paragraphs, plus a greeting line and a closing line.
     - Each email MUST be between 150 and 200 words.
     - Sentences must still be meaningful and detailed, not short fragments.
