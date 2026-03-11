@@ -1,5 +1,6 @@
 from flask import Blueprint, current_app, jsonify, render_template, request, redirect, session, url_for, flash
-from .db import get_db
+from .models import PreSimResponse, SimResponse
+from . import db
 import json
 from groq import RateLimitError, APIError
 
@@ -178,20 +179,17 @@ def intermission():
 def preSim_page():
     if not session.get("access_granted"):
         return redirect(url_for("main.access"))
-    # PRETEST + POSTTEST ENTRY GUARD
+
     mode = session.get('test_mode', 'pre')
 
-    # Must have examples (both pre and post need this)
     if 'generated_examples' not in session:
         flash("Please start the simulator first.")
         return redirect(url_for('main.intermission'))
 
-    # POST-TEST ONLY: must have pretest_results
     if mode == 'post' and 'pretest_results' not in session:
         flash("Please complete the pre-test before starting the post-test.")
         return redirect(url_for('main.index'))
 
-    
     raw = session.get('generated_examples')
     profession = session.get('profession')
     realname = session.get('realname')
@@ -211,9 +209,9 @@ def preSim_page():
         pq5 = request.form.get('pq5')
 
         mapping = {
-        "A": "phishing",
-        "B": "real",
-        "C": "unsure"
+            "A": "phishing",
+            "B": "real",
+            "C": "unsure"
         }
 
         pq1 = mapping.get(pq1)
@@ -222,31 +220,24 @@ def preSim_page():
         pq4 = mapping.get(pq4)
         pq5 = mapping.get(pq5)
 
-        # DETERMINE CORRECT ANSWERS
         correct1 = 1 if pq1.lower().strip() == examples[0]["type"].lower().strip() else 0
         correct2 = 1 if pq2.lower().strip() == examples[1]["type"].lower().strip() else 0
         correct3 = 1 if pq3.lower().strip() == examples[2]["type"].lower().strip() else 0
         correct4 = 1 if pq4.lower().strip() == examples[3]["type"].lower().strip() else 0
         correct5 = 1 if pq5.lower().strip() == examples[4]["type"].lower().strip() else 0
 
-        # CHOOSE TABLE BASED ON TEST MODE
-        mode = session.get('test_mode', 'pre')
-        table = "pre_sim_responses" if mode == 'pre' else "sim_responses"
-
-        # PRE-TEST SAVES TO DB AND SESSION
+        # PRE-TEST
         if mode == 'pre':
-            db = get_db()
-            db.execute(
-                """
-                INSERT INTO pre_sim_responses
-                (pq1, pq1_correct, pq2, pq2_correct, pq3, pq3_correct, pq4, pq4_correct, pq5, pq5_correct)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (pq1, correct1, pq2, correct2, pq3, correct3, pq4, correct4, pq5, correct5)
+            entry = PreSimResponse(
+                pq1=pq1, pq1_correct=correct1,
+                pq2=pq2, pq2_correct=correct2,
+                pq3=pq3, pq3_correct=correct3,
+                pq4=pq4, pq4_correct=correct4,
+                pq5=pq5, pq5_correct=correct5
             )
-            db.commit()
+            db.session.add(entry)
+            db.session.commit()
 
-            # SAVE PRETEST RESULTS TO SESSION FOR POSTTEST
             session['pretest_results'] = {
                 'pq1': pq1, 'pq1_correct': correct1,
                 'pq2': pq2, 'pq2_correct': correct2,
@@ -257,49 +248,37 @@ def preSim_page():
 
             return redirect(url_for('main.index'))
 
-        # END PRE-TEST BLOCK 
-
-        # POST-TEST SAVES BOTH TESTS 
+        # POST-TEST
         if mode == 'post':
             pre = session.get('pretest_results')
             if not pre:
                 return redirect(url_for('main.index'))
 
-            db = get_db()
-
-            # SAVE PRE-TEST
-            db.execute(
-                """
-                INSERT INTO pre_sim_responses
-                (pq1, pq1_correct, pq2, pq2_correct, pq3, pq3_correct, pq4, pq4_correct, pq5, pq5_correct)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    pre["pq1"], pre["pq1_correct"],
-                    pre["pq2"], pre["pq2_correct"],
-                    pre["pq3"], pre["pq3_correct"],
-                    pre["pq4"], pre["pq4_correct"],
-                    pre["pq5"], pre["pq5_correct"]
-                )
+            # Save PRE-TEST to DB
+            pre_entry = PreSimResponse(
+                pq1=pre["pq1"], pq1_correct=pre["pq1_correct"],
+                pq2=pre["pq2"], pq2_correct=pre["pq2_correct"],
+                pq3=pre["pq3"], pq3_correct=pre["pq3_correct"],
+                pq4=pre["pq4"], pq4_correct=pre["pq4_correct"],
+                pq5=pre["pq5"], pq5_correct=pre["pq5_correct"]
             )
+            db.session.add(pre_entry)
 
-            # SAVE POST-TEST
-            db.execute(
-                f"""
-                INSERT INTO {table}
-                (pq1, pq1_correct, pq2, pq2_correct, pq3, pq3_correct, pq4, pq4_correct, pq5, pq5_correct)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (pq1, correct1, pq2, correct2, pq3, correct3, pq4, correct4, pq5, correct5)
+            # Save POST-TEST to DB
+            post_entry = SimResponse(
+                pq1=pq1, pq1_correct=correct1,
+                pq2=pq2, pq2_correct=correct2,
+                pq3=pq3, pq3_correct=correct3,
+                pq4=pq4, pq4_correct=correct4,
+                pq5=pq5, pq5_correct=correct5
             )
+            db.session.add(post_entry)
 
-            db.commit()
+            db.session.commit()
 
-            # CLEAR PRE-TEST FROM SESSION AFTER SAVING TO DB
             session.pop('pretest_results', None)
 
             return redirect(url_for('main.show'))
-            # END POST-TEST BLOCK
 
     return render_template('preSim.html', examples=examples, profession=profession, realname=realname)
 
@@ -328,14 +307,19 @@ def test_page():
 def show():
     if not session.get("access_granted"):
         return redirect(url_for("main.access"))
-    db = get_db()
-    sim_responses = db.execute("SELECT * FROM sim_responses").fetchall()
-    preSim_responses = db.execute("SELECT * FROM pre_sim_responses").fetchall()
 
-    # User reached the data page → clear access for next time
+    # Query Postgres using SQLAlchemy
+    sim_responses = SimResponse.query.all()
+    preSim_responses = PreSimResponse.query.all()
+
+    # Clear access for next time
     session.pop("access_granted", None)
 
-    return render_template('data.html', sim_responses=sim_responses, preSim_responses=preSim_responses)
+    return render_template(
+        'data.html',
+        sim_responses=sim_responses,
+        preSim_responses=preSim_responses
+    )
 
 @bp.route('/handle-profession', methods=['POST'])
 def handle_profession():
