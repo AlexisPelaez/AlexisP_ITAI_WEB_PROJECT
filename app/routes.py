@@ -187,10 +187,9 @@ def intermission():
 def preSim_page():
 
     if "test_run_id" not in session:
-        import uuid
         session["test_run_id"] = str(uuid.uuid4())
         session.modified = True
-        
+
     if not session.get("access_granted"):
         return redirect(url_for("main.access"))
 
