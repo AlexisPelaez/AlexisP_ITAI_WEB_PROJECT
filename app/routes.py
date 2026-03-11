@@ -83,13 +83,6 @@ bp = Blueprint('main',__name__)
 
 PASSWORD = "PhishingU"   # CHANGE DEPENDING ON WHATEVER YOU WANT
 
-
-@bp.route('/reset-db')
-def reset_db():
-    db.drop_all()
-    db.create_all()
-    return "Database reset!"
-
 @bp.route("/access", methods=["GET", "POST"])
 def access():
     if request.method == "POST":
